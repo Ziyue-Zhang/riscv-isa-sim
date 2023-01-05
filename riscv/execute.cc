@@ -206,6 +206,13 @@ bool processor_t::slow_path()
          log_commits_enabled || histogram_enabled;
 }
 
+void processor_t::execute_insn(uint64_t insn)
+{
+    reg_t pc = state.pc;
+    insn_fetch_t fetch = mmu->decode_insn(insn);
+    execute_insn_fast(this, pc, fetch);
+}
+
 // fetch/decode/execute loop
 void processor_t::step(size_t n)
 {

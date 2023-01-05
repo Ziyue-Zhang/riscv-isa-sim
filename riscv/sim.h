@@ -9,6 +9,7 @@
 #include "log_file.h"
 #include "processor.h"
 #include "simif.h"
+#include "vector_unit.h"
 
 #include <fesvr/htif.h>
 #include <fesvr/context.h>
@@ -56,7 +57,13 @@ public:
 
   // Callback for processors to let the simulation know they were reset.
   void proc_reset(unsigned id);
-
+  void vector_unit_init();
+  uint64_t vector_unit_vreg_read(reg_t vReg, reg_t n);
+  void vector_unit_vreg_write(reg_t vReg, reg_t n, uint64_t val);
+  uint64_t vector_unit_reg_read(reg_t Reg);
+  void vector_unit_reg_write(reg_t Reg, uint64_t val);
+  void vector_unit_execute_insn(uint64_t insn);
+  uint64_t vector_unit_pc_read();
 private:
   isa_parser_t isa;
   const cfg_t * const cfg;
