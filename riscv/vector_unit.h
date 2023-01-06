@@ -124,6 +124,10 @@ public:
 
   reg_t set_vl(int rd, int rs1, reg_t reqVL, reg_t newType);
 
+  void print_vector_unit() {
+    printf("vstart = %ld, vl = %ld\n", vstart->read(), vl->read());
+  }
+
   reg_t get_vlen() { return VLEN; }
   reg_t get_elen() { return ELEN; }
   reg_t get_slen() { return VLEN; }

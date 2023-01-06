@@ -41,6 +41,10 @@ uint64_t sim_t::vector_unit_pc_read() {
     return state->pc;
 }
 
+void sim_t::vector_unit_set_print() {
+    p->VU.print_vector_unit();
+}
+
 static std::vector<std::pair<reg_t, mem_t*>> make_vector_mems(const std::vector<mem_cfg_t> &layout)
 {
     std::vector<std::pair<reg_t, mem_t*>> mems;
@@ -80,12 +84,16 @@ extern "C" {
         p->step(n);
     }
 
+    void vector_set_print() {
+        s->vector_unit_set_print();
+    }
+
     void vector_sim_init() {
         std::vector<mem_cfg_t> mem_cfg { mem_cfg_t(0x80000000, 0x10000000) };
         std::vector<int> hartids = {0};
-        cfg_t cfg(std::make_pair(0, 0),
+        auto const cfg = new cfg_t(std::make_pair(0, 0),
                 nullptr,
-                "rv64gcv",
+                "rv64gv",
                 "MSU",
                 "vlen:128,elen:64",
                 endianness_little,
@@ -106,8 +114,8 @@ extern "C" {
             .support_haltgroups = true,
             .support_impebreak = true
         };
-        std::vector<std::pair<reg_t, mem_t*>> mems = make_vector_mems(cfg.mem_layout());
-        s = new sim_t(&cfg, false,
+        std::vector<std::pair<reg_t, mem_t*>> mems = make_vector_mems(cfg->mem_layout());
+        s = new sim_t(cfg, false,
                 mems,
                 plugin_devices,
                 htif_args,
@@ -118,6 +126,10 @@ extern "C" {
                 false,
                 nullptr);
         s->vector_unit_init();
+        if (p->extension_enabled('V')) {
+            printf("Vector extension enabled\n");
+        }
+        p->VU.reset();
     }
 
 }

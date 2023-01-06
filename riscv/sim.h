@@ -64,6 +64,7 @@ public:
   void vector_unit_reg_write(reg_t Reg, uint64_t val);
   void vector_unit_execute_insn(uint64_t insn);
   uint64_t vector_unit_pc_read();
+  void vector_unit_set_print();
 private:
   isa_parser_t isa;
   const cfg_t * const cfg;
