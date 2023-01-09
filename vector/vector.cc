@@ -1,11 +1,13 @@
 #include "vector_unit.h"
 #include "sim.h"
 #include "cfg.h"
+#include "disasm.h"
 
 static sim_t *s = NULL;
 static processor_t *p = NULL;
 static state_t *state = NULL;
 static vectorUnit_t *vu = NULL;
+static disassembler_t* disassembler = NULL;
 
 void sim_t::vector_unit_init()
 {
@@ -45,6 +47,10 @@ void sim_t::vector_unit_set_print() {
     p->VU.print_vector_unit();
 }
 
+void sim_t::vector_insn_print(uint64_t insn) {
+    std::cout << "execute: " << disassembler->disassemble(insn) << std::endl;
+}
+
 static std::vector<std::pair<reg_t, mem_t*>> make_vector_mems(const std::vector<mem_cfg_t> &layout)
 {
     std::vector<std::pair<reg_t, mem_t*>> mems;
@@ -80,12 +86,12 @@ extern "C" {
         s->vector_unit_execute_insn(insn);
     }
 
-    void vector_step(int n) {
-        p->step(n);
-    }
-
     void vector_set_print() {
         s->vector_unit_set_print();
+    }
+
+    void vector_insn_print(uint64_t insn) {
+        s->vector_insn_print(insn);
     }
 
     void vector_sim_init() {
@@ -125,6 +131,8 @@ extern "C" {
                 nullptr,
                 false,
                 nullptr);
+        isa_parser_t isa_parser("rv64gv", DEFAULT_PRIV);
+        disassembler = new disassembler_t(&isa_parser);
         s->vector_unit_init();
         if (p->extension_enabled('V')) {
             printf("Vector extension enabled\n");

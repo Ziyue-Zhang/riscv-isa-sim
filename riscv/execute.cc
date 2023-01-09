@@ -210,7 +210,8 @@ void processor_t::execute_insn(uint64_t insn)
 {
     reg_t pc = state.pc;
     insn_fetch_t fetch = mmu->decode_insn(insn);
-    execute_insn_fast(this, pc, fetch);
+    pc = execute_insn_fast(this, pc, fetch);
+    state.pc = pc;
 }
 
 // fetch/decode/execute loop
