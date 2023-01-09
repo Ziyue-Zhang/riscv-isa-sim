@@ -97,7 +97,7 @@ extern "C" {
     void vector_sim_init() {
         std::vector<mem_cfg_t> mem_cfg { mem_cfg_t(0x80000000, 0x10000000) };
         std::vector<int> hartids = {0};
-        auto const cfg = new cfg_t(std::make_pair(0, 0),
+        cfg_t cfg(std::make_pair(0, 0),
                 nullptr,
                 "rv64gv",
                 "MSU",
@@ -120,8 +120,8 @@ extern "C" {
             .support_haltgroups = true,
             .support_impebreak = true
         };
-        std::vector<std::pair<reg_t, mem_t*>> mems = make_vector_mems(cfg->mem_layout());
-        s = new sim_t(cfg, false,
+        std::vector<std::pair<reg_t, mem_t*>> mems = make_vector_mems(cfg.mem_layout());
+        s = new sim_t(&cfg, false,
                 mems,
                 plugin_devices,
                 htif_args,
@@ -134,9 +134,6 @@ extern "C" {
         isa_parser_t isa_parser("rv64gv", DEFAULT_PRIV);
         disassembler = new disassembler_t(&isa_parser);
         s->vector_unit_init();
-        if (p->extension_enabled('V')) {
-            printf("Vector extension enabled\n");
-        }
         p->VU.reset();
     }
 
