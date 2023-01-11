@@ -978,7 +978,7 @@ insn_func_t processor_t::decode_insn(insn_t insn)
     // while ((insn.bits() & p->mask) != p->match)
     //   p++;
     #pragma omp parallel for
-    for (int i = 0; i < instructions.size(); i++) {
+    for (unsigned i = 0; i < instructions.size(); i++) {
       if ((insn.bits() & p[i].mask) == p[i].match) {
         q = &p[i];
         find = true;
