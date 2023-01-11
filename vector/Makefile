@@ -20,7 +20,7 @@ INC_PATH += -I$(NEMU_HOME)/include
 LIB_DEPENDENCIES = libspike_main.a libriscv.a libdisasm.a libsoftfloat.a libfesvr.a libfdt.a
 INC_LIBS  = $(addprefix $(REPO_PATH)/build/, $(LIB_DEPENDENCIES))
 SRCS = $(shell find . -name '*.cc') $(shell find ./include -name '*.h')
-CXXFLAGS = -O3 --std=c++17 -shared -fPIC
+CXXFLAGS = -O3 --std=c++17 -shared -fPIC -fopenmp
 
 ifneq ($(DEBUG),)
 CONFIGURE_FLAGS += --enable-commitlog

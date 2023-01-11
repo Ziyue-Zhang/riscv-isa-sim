@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <string>
 #include <algorithm>
+#include <omp.h>
 
 #ifdef __GNUC__
 # pragma GCC diagnostic ignored "-Wunused-variable"
@@ -971,11 +972,20 @@ insn_func_t processor_t::decode_insn(insn_t insn)
 
   if (unlikely(insn.bits() != desc.match)) {
     // fall back to linear search
-    int cnt = 0;
     insn_desc_t* p = &instructions[0];
-    while ((insn.bits() & p->mask) != p->match)
-      p++, cnt++;
-    desc = *p;
+    insn_desc_t* q = &instructions[0];
+    bool find = false;
+    // while ((insn.bits() & p->mask) != p->match)
+    //   p++;
+    #pragma omp parallel for
+    for (int i = 0; i < instructions.size(); i++) {
+      if ((insn.bits() & p[i].mask) == p[i].match) {
+        q = &p[i];
+        find = true;
+      }
+      if (find) break;
+    }
+    desc = *q;
 
     if (p->mask != 0 && p > &instructions[0]) {
       if (p->match != (p - 1)->match && p->match != (p + 1)->match) {
